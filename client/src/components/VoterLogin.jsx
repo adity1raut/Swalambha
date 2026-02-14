@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-function Login() {
-  const [isCreateMode, setIsCreateMode] = useState(false);
+function VoterLogin() {
+  const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: '',
-    role: 'admin'
+    voterId: '',
+    electionId: ''
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -18,8 +20,8 @@ function Login() {
 
   useEffect(() => {
     // Redirect if already logged in
-    if (user && userType === 'admin') {
-      navigate('/dashboard', { replace: true });
+    if (user && userType === 'voter') {
+      navigate('/voter/dashboard', { replace: true });
     }
   }, [user, userType, navigate]);
 
@@ -39,32 +41,35 @@ function Login() {
     setSuccess('');
 
     try {
-      const endpoint = isCreateMode ? '/create' : '/login';
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin${endpoint}`, {
+      const endpoint = isRegisterMode ? '/register' : '/login';
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/voter${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(isRegisterMode ? formData : {
+          email: formData.email,
+          password: formData.password
+        }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        if (isCreateMode) {
-          setSuccess('Admin created successfully! You can now login.');
-          setFormData({ email: '', password: '', role: 'admin' });
+        if (isRegisterMode) {
+          setSuccess('Registration successful! You can now login.');
+          setFormData({ name: '', email: '', password: '', voterId: '', electionId: '' });
           setTimeout(() => {
-            setIsCreateMode(false);
+            setIsRegisterMode(false);
             setSuccess('');
           }, 2000);
         } else {
-          login(data.token, data.admin, 'admin');
-          navigate('/dashboard');
+          login(data.token, data.voter, 'voter');
+          navigate('/voter/dashboard');
         }
       } else {
-        setError(data.message || `${isCreateMode ? 'Admin creation' : 'Login'} failed`);
+        setError(data.message || `${isRegisterMode ? 'Registration' : 'Login'} failed`);
       }
     } catch (err) {
       setError('Network error. Please try again.');
@@ -75,8 +80,8 @@ function Login() {
   };
 
   const toggleMode = () => {
-    setIsCreateMode(!isCreateMode);
-    setFormData({ email: '', password: '', role: 'admin' });
+    setIsRegisterMode(!isRegisterMode);
+    setFormData({ name: '', email: '', password: '', voterId: '', electionId: '' });
     setError('');
     setSuccess('');
   };
@@ -85,10 +90,26 @@ function Login() {
     <div style={styles.container}>
       <div style={styles.formWrapper}>
         <h2 style={styles.title}>
-          {isCreateMode ? 'Create Admin Account' : 'Admin Login'}
+          {isRegisterMode ? 'Voter Registration' : 'Voter Login'}
         </h2>
         
         <form onSubmit={handleSubmit} style={styles.form}>
+          {isRegisterMode && (
+            <div style={styles.inputGroup}>
+              <label htmlFor="name" style={styles.label}>Full Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                style={styles.input}
+                placeholder="Enter your full name"
+              />
+            </div>
+          )}
+
           <div style={styles.inputGroup}>
             <label htmlFor="email" style={styles.label}>Email</label>
             <input
@@ -117,20 +138,36 @@ function Login() {
             />
           </div>
 
-          {isCreateMode && (
-            <div style={styles.inputGroup}>
-              <label htmlFor="role" style={styles.label}>Role</label>
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                style={styles.input}
-              >
-                <option value="admin">Admin</option>
-                <option value="superadmin">Super Admin</option>
-              </select>
-            </div>
+          {isRegisterMode && (
+            <>
+              <div style={styles.inputGroup}>
+                <label htmlFor="voterId" style={styles.label}>Voter ID</label>
+                <input
+                  type="text"
+                  id="voterId"
+                  name="voterId"
+                  value={formData.voterId}
+                  onChange={handleChange}
+                  required
+                  style={styles.input}
+                  placeholder="Enter your voter ID"
+                />
+              </div>
+
+              <div style={styles.inputGroup}>
+                <label htmlFor="electionId" style={styles.label}>Election ID</label>
+                <input
+                  type="text"
+                  id="electionId"
+                  name="electionId"
+                  value={formData.electionId}
+                  onChange={handleChange}
+                  required
+                  style={styles.input}
+                  placeholder="Enter election ID"
+                />
+              </div>
+            </>
           )}
 
           {error && <div style={styles.error}>{error}</div>}
@@ -144,7 +181,7 @@ function Login() {
               ...(loading ? styles.buttonDisabled : {})
             }}
           >
-            {loading ? (isCreateMode ? 'Creating...' : 'Logging in...') : (isCreateMode ? 'Create Admin' : 'Login')}
+            {loading ? (isRegisterMode ? 'Registering...' : 'Logging in...') : (isRegisterMode ? 'Register' : 'Login')}
           </button>
 
           <button
@@ -152,11 +189,11 @@ function Login() {
             onClick={toggleMode}
             style={styles.toggleButton}
           >
-            {isCreateMode ? 'Back to Login' : 'Create New Admin'}
+            {isRegisterMode ? 'Already have an account? Login' : 'New voter? Register'}
           </button>
 
-          <Link to="/voter/login" style={styles.voterLink}>
-            Login as Voter
+          <Link to="/login" style={styles.adminLink}>
+            Login as Admin
           </Link>
         </form>
       </div>
@@ -214,7 +251,7 @@ const styles = {
     padding: '12px',
     fontSize: '16px',
     fontWeight: '600',
-    backgroundColor: '#007bff',
+    backgroundColor: '#28a745',
     color: 'white',
     border: 'none',
     borderRadius: '4px',
@@ -230,16 +267,16 @@ const styles = {
     padding: '10px',
     fontSize: '14px',
     backgroundColor: 'transparent',
-    color: '#007bff',
-    border: '1px solid #007bff',
+    color: '#28a745',
+    border: '1px solid #28a745',
     borderRadius: '4px',
     cursor: 'pointer',
     transition: 'all 0.3s'
   },
-  voterLink: {
+  adminLink: {
     textAlign: 'center',
     fontSize: '14px',
-    color: '#28a745',
+    color: '#007bff',
     textDecoration: 'none',
     marginTop: '10px'
   },
@@ -261,4 +298,4 @@ const styles = {
   }
 };
 
-export default Login;
+export default VoterLogin;
