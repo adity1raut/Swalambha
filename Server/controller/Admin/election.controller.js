@@ -27,7 +27,7 @@ const generateVoterId = () => {
 // Create Election with Voters
 export const createElection = async (req, res) => {
   try {
-    const { title, description, voters } = req.body;
+    const { title, description, regStartDate, regEndDate, electionStartDate, electionEndDate, voters } = req.body;
     const adminId = req.user.id;
     const admin = await Admin.findById(adminId).select("email");
 
@@ -52,12 +52,12 @@ export const createElection = async (req, res) => {
       });
     }
 
-    // Create election with default dates (can be updated later)
+    // Create election
     const election = new Election({
       title,
       description: description || "",
-      startDate: new Date(), // Default to now
-      endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Default to 30 days from now
+      startDate: electionStartDate ? new Date(electionStartDate) : new Date(),
+      endDate: electionEndDate ? new Date(electionEndDate) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       status: "DRAFT",
       totalVoters: voters.length,
       createdBy: adminId,
@@ -66,10 +66,10 @@ export const createElection = async (req, res) => {
     await createElectionOnchain(
       email,
       title,
-      new Date(),
-      new Date(Date.now() + 28 * 24 * 60 * 60 * 1000),
-      new Date(Date.now() + 29 * 24 * 60 * 60 * 1000),
-      new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      regStartDate ? new Date(regStartDate) : new Date(),
+      regEndDate ? new Date(regEndDate) : new Date(Date.now() + 28 * 24 * 60 * 60 * 1000),
+      electionStartDate ? new Date(electionStartDate) : new Date(Date.now() + 29 * 24 * 60 * 60 * 1000),
+      electionEndDate ? new Date(electionEndDate) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     );
     await election.save();
 
