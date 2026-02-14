@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import Chatbot from '../chatbot/ChatComponent'; 
 
 function VoterDashboard() {
-  const { user, logout, token } = useAuth();
+  const {logout, token } = useAuth();
   const navigate = useNavigate();
   const { theme, toggleTheme, colors } = useTheme();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showChatbot, setShowChatbot] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -146,7 +148,28 @@ function VoterDashboard() {
       fontSize: '20px',
       color: colors.textSecondary,
       background: colors.gradient,
-    }
+    },
+    chatbotToggle: {
+      position: 'fixed',
+      bottom: '30px',
+      right: '30px',
+      width: '60px',
+      height: '60px',
+      borderRadius: '50%',
+      background: showChatbot 
+        ? 'linear-gradient(135deg, #ef4444, #dc2626)'
+        : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      border: 'none',
+      color: 'white',
+      fontSize: '28px',
+      cursor: 'pointer',
+      boxShadow: showChatbot
+        ? '0 4px 15px rgba(239, 68, 68, 0.4)'
+        : '0 4px 15px rgba(102, 126, 234, 0.4)',
+      transition: 'all 0.3s ease',
+      zIndex: 1000,
+      transform: showChatbot ? 'rotate(90deg)' : 'rotate(0deg)',
+    },
   });
 
   const styles = getStyles();
@@ -262,6 +285,32 @@ function VoterDashboard() {
           </div>
         )}
       </div>
+
+      {/* Chatbot toggle button with dynamic icon */}
+      <button
+        onClick={() => setShowChatbot(!showChatbot)}
+        style={styles.chatbotToggle}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = `scale(1.1) rotate(${showChatbot ? '90deg' : '0deg'})`;
+          e.currentTarget.style.boxShadow = showChatbot
+            ? '0 6px 20px rgba(239, 68, 68, 0.6)'
+            : '0 6px 20px rgba(102, 126, 234, 0.6)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = `scale(1) rotate(${showChatbot ? '90deg' : '0deg'})`;
+          e.currentTarget.style.boxShadow = showChatbot
+            ? '0 4px 15px rgba(239, 68, 68, 0.4)'
+            : '0 4px 15px rgba(102, 126, 234, 0.4)';
+        }}
+        title={showChatbot ? 'Close chat' : 'Chat with us'}
+      >
+        {showChatbot ? '✕' : '💬'}
+      </button>
+
+      {/* Chatbot component */}
+      {showChatbot && (
+        <Chatbot onClose={() => setShowChatbot(false)} />
+      )}
     </div>
   );
 }
