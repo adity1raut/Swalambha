@@ -115,17 +115,19 @@ def get_gemini_llm():
 
 # Custom prompt template for better responses
 def get_qa_prompt():
-    template = """You are a helpful AI assistant that answers questions based on the provided context. 
-Use the following pieces of context to answer the question at the end. 
+    template = """You are a friendly and helpful AI assistant that answers questions based on the provided document context.
 
-If you don't know the answer based on the context, just say "I don't have enough information to answer this question based on the provided documents."
+Instructions:
+1. If the user sends a greeting (like "hello", "hi", "hey", etc.) or a general message, respond with a friendly greeting. Then briefly summarize what the uploaded documents are about and suggest topics the user can ask about.
+2. For actual questions, use the context below to provide a detailed and accurate answer.
+3. If a question cannot be answered from the context, say so and suggest related topics from the documents that the user could ask about instead.
 
 Context:
 {context}
 
 Question: {question}
 
-Answer: Provide a detailed and accurate answer based strictly on the context above."""
+Answer:"""
 
     return PromptTemplate(
         template=template,
