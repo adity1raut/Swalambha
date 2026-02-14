@@ -59,11 +59,11 @@ const Vote = () => {
 
   if (!election) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
         <Navbar title="Voter Panel" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-16">
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Election Not Found</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 text-center border border-gray-200 dark:border-gray-700">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Election Not Found</h2>
             <Button onClick={() => navigate('/voter/elections')}>
               Back to Elections
             </Button>
@@ -74,17 +74,17 @@ const Vote = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <Navbar title="Voter Panel" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-16">
         {/* Election Header */}
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{election.title}</h1>
-          <p className="text-gray-600 mb-4">{election.description}</p>
-          <div className="flex gap-6 text-sm text-gray-600">
-            <span>Ends: <strong className="text-gray-900">{election.endDate}</strong></span>
-            <span className="px-3 py-1 rounded-full bg-green-100 text-green-800 font-semibold">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-6 mb-8 transition-colors">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{election.title}</h1>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">{election.description}</p>
+          <div className="flex gap-6 text-sm text-gray-600 dark:text-gray-400">
+            <span>Ends: <strong className="text-gray-900 dark:text-white">{election.endDate}</strong></span>
+            <span className="px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 font-semibold">
               {election.status}
             </span>
           </div>

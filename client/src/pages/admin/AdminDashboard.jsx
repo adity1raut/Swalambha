@@ -22,7 +22,7 @@ const AdminDashboard = () => {
   const recentElections = dummyElections.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <Navbar title="Admin Panel" />
       <Sidebar items={sidebarItems} />
       
@@ -30,8 +30,8 @@ const AdminDashboard = () => {
         <div className="p-8">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-600 mt-2">Welcome to the Election Management System</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">Welcome to the Election Management System</p>
           </div>
 
           {/* Stats Cards */}

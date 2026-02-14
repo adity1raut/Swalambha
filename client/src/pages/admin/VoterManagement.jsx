@@ -101,7 +101,7 @@ const VoterManagement = () => {
     : voters.filter(v => v.status === filter);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <Navbar title="Admin Panel" />
       <Sidebar items={sidebarItems} />
       
@@ -110,8 +110,8 @@ const VoterManagement = () => {
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Voter Management</h1>
-              <p className="text-gray-600 mt-2">Manage and approve registered voters</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Voter Management</h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Manage and approve registered voters</p>
             </div>
             <Button onClick={() => setIsUploadModalOpen(true)}>
               📤 Upload CSV/Excel

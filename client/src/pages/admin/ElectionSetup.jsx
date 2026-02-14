@@ -63,7 +63,7 @@ const ElectionSetup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <Navbar title="Admin Panel" />
       <Sidebar items={sidebarItems} />
       
@@ -72,8 +72,8 @@ const ElectionSetup = () => {
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Election Setup</h1>
-              <p className="text-gray-600 mt-2">Create and manage elections</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Election Setup</h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Create and manage elections</p>
             </div>
             <Button onClick={() => setIsCreateModalOpen(true)}>
               ➕ Create New Election

@@ -89,7 +89,7 @@ const CandidateManagement = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <Navbar title="Admin Panel" />
       <Sidebar items={sidebarItems} />
       
@@ -97,8 +97,8 @@ const CandidateManagement = () => {
         <div className="p-8">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Candidate Management</h1>
-            <p className="text-gray-600 mt-2">Review and approve candidate applications</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Candidate Management</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">Review and approve candidate applications</p>
           </div>
 
           {/* Stats */}

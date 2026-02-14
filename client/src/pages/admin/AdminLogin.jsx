@@ -1,18 +1,15 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import FormInput from '../components/FormInput';
-import Button from '../components/Button';
-import Modal from '../components/Modal';
+import Navbar from '../../components/Navbar';
+import FormInput from '../../components/FormInput';
+import Button from '../../components/Button';
 
-const Login = () => {
+const AdminLogin = () => {
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
     email: '',
     password: ''
   });
-  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
-  const [resetEmail, setResetEmail] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,34 +28,19 @@ const Login = () => {
     setLoading(true);
     setError('');
 
-    // TODO: Connect to blockchain backend API
+    // TODO: Connect to blockchain backend API for admin authentication
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
+      // Verify admin credentials
       if (loginData.email && loginData.password) {
-        // Demo: Navigate to voter dashboard
-        navigate('/voter/dashboard');
+        // Admin-specific validation
+        navigate('/admin/dashboard');
       } else {
         setError('Please enter both email and password');
       }
     } catch (err) {
-      setError('Login failed. Please check your credentials.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePasswordReset = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert(`Password reset instructions have been sent to ${resetEmail}`);
-      setIsResetModalOpen(false);
-      setResetEmail('');
-    } catch (err) {
-      alert('Failed to send reset email. Please try again.');
+      setError('Invalid admin credentials. Please contact system administrator.');
     } finally {
       setLoading(false);
     }
@@ -69,20 +51,17 @@ const Login = () => {
       <Navbar />
       
       <div className="w-full max-w-lg px-4 py-8">
-        {/* Login Card */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-8">
-          {/* Header */}
           <div className="text-center mb-6">
-            <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Welcome Back</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">Sign in to your account</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Admin Portal</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">Secure administrator access</p>
           </div>
 
-          {/* Error Message */}
           {error && (
             <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
               <p className="text-sm text-red-800 dark:text-red-400 flex items-center">
@@ -94,26 +73,34 @@ const Login = () => {
             </div>
           )}
 
-          {/* Login Form */}
+          <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+            <p className="text-sm text-yellow-800 dark:text-yellow-400 flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              Restricted access. Admin credentials only.
+            </p>
+          </div>
+
           <form onSubmit={handleLogin}>
             <FormInput
-              label="Email Address"
+              label="Admin Email"
               type="email"
               name="email"
               value={loginData.email}
               onChange={handleInputChange}
-              placeholder="Enter your email"
+              placeholder="Enter admin email"
               required
             />
 
             <div className="relative">
               <FormInput
-                label="Password"
+                label="Admin Password"
                 type={showPassword ? "text" : "password"}
                 name="password"
                 value={loginData.password}
                 onChange={handleInputChange}
-                placeholder="Enter your password"
+                placeholder="Enter admin password"
                 required
               />
               <button
@@ -134,28 +121,11 @@ const Login = () => {
               </button>
             </div>
 
-            <div className="flex items-center justify-between mb-6">
-              <label className="flex items-center">
-                <input 
-                  type="checkbox" 
-                  className="h-4 w-4 text-blue-600 dark:text-blue-500 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500"
-                />
-                <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Remember me</span>
-              </label>
-              
-              <button
-                type="button"
-                onClick={() => setIsResetModalOpen(true)}
-                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
-              >
-                Forgot password?
-              </button>
-            </div>
-
             <Button 
               type="submit" 
               fullWidth 
               disabled={loading}
+              variant="danger"
             >
               {loading ? (
                 <span className="flex items-center justify-center">
@@ -163,73 +133,23 @@ const Login = () => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Signing in...
+                  Verifying...
                 </span>
               ) : (
-                'Sign In'
+                'Admin Sign In'
               )}
             </Button>
           </form>
 
-          {/* Footer Links */}
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Don't have an account?{' '}
-              <Link to="/signup" className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
-                Sign Up
-              </Link>
-            </p>
-          </div>
-          
-          {/* Admin Login Link */}
-          <div className="mt-4 text-center">
-            <Link to="/admin/login" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium">
-              Admin Login →
+            <Link to="/login" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium">
+              ← Back to User Login
             </Link>
           </div>
         </div>
       </div>
-
-      {/* Password Reset Modal */}
-      <Modal
-        isOpen={isResetModalOpen}
-        onClose={() => setIsResetModalOpen(false)}
-        title="Reset Password"
-        footer={
-          <div className="flex justify-end gap-2">
-            <Button 
-              variant="secondary" 
-              onClick={() => setIsResetModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button 
-              onClick={handlePasswordReset}
-              disabled={!resetEmail || loading}
-            >
-              {loading ? 'Sending...' : 'Send Reset Link'}
-            </Button>
-          </div>
-        }
-      >
-        <div>
-          <p className="text-gray-700 dark:text-gray-300 mb-4">
-            Enter your registered email address and we'll send you instructions to reset your password.
-          </p>
-
-          <FormInput
-            label="Email Address"
-            type="email"
-            name="resetEmail"
-            value={resetEmail}
-            onChange={(e) => setResetEmail(e.target.value)}
-            placeholder="Enter your registered email"
-            required
-          />
-        </div>
-      </Modal>
     </div>
   );
 };
 
-export default Login;
+export default AdminLogin;

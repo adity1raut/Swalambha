@@ -13,7 +13,7 @@ const Results = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <Navbar title="Admin Panel" />
       <Sidebar items={sidebarItems} />
       
@@ -21,8 +21,8 @@ const Results = () => {
         <div className="p-8">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Election Results</h1>
-            <p className="text-gray-600 mt-2">View and analyze election outcomes</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Election Results</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">View and analyze election outcomes</p>
           </div>
 
           {/* Results Display */}
