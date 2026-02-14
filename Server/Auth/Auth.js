@@ -6,13 +6,20 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const authenticateToken = (req, res, next) => {
-    const authHeader = req.header('Authorization');
+    // First, try to get token from cookie
+    let token = req.cookies?.authToken;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'Access Denied: No token provided' });
+    // If no cookie, check Authorization header
+    if (!token) {
+        const authHeader = req.header('Authorization');
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            token = authHeader.split(' ')[1];
+        }
     }
 
-    const token = authHeader.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ message: 'Access Denied: No token provided' });
+    }
 
     try {
         const verified = jwt.verify(token, JWT_SECRET);
@@ -23,4 +30,4 @@ const authenticateToken = (req, res, next) => {
     }
 };
 
-export default authenticateToken ;
+export default authenticateToken;

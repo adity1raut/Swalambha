@@ -11,6 +11,7 @@ const voterSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
       lowercase: true,
       trim: true
     },
@@ -21,7 +22,13 @@ const voterSchema = new mongoose.Schema(
       select: false
     },
 
-    electionId: {
+    voterId: {
+      type: String,
+      unique: true,
+      required: true
+    },
+
+    election: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Election",
       required: true
@@ -32,11 +39,6 @@ const voterSchema = new mongoose.Schema(
       default: false
     },
 
-    isCandidate: {
-      type: Boolean,
-      default: false
-    },
-    
     isActive: {
       type: Boolean,
       default: true
@@ -44,7 +46,5 @@ const voterSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-voterSchema.index({ email: 1, electionId: 1 }, { unique: true });
 
 export default mongoose.model("Voter", voterSchema);
