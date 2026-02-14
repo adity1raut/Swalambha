@@ -1,9 +1,11 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 function ProtectedRoute({ children, allowedRoles = [] }) {
   const { user, userType, loading } = useAuth();
+  const { colors } = useTheme();
 
   if (loading) {
     return (
@@ -13,7 +15,8 @@ function ProtectedRoute({ children, allowedRoles = [] }) {
         alignItems: 'center', 
         height: '100vh',
         fontSize: '18px',
-        color: '#666'
+        color: colors.textSecondary,
+        background: colors.background
       }}>
         Loading...
       </div>
