@@ -5,7 +5,7 @@ const voterSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
 
     email: {
@@ -13,38 +13,38 @@ const voterSchema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
-      trim: true
+      trim: true,
     },
 
     password: {
       type: String,
       required: true,
-      select: false
+      select: false,
     },
 
     voterId: {
       type: String,
       unique: true,
-      required: true
+      required: true,
     },
 
     election: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Election",
-      required: true
+      required: true,
     },
 
     hasVoted: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     isActive: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("Voter", voterSchema);

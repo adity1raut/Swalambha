@@ -1,0 +1,16 @@
+{
+  "2023bcs035@sggs.ac.in": {
+    "accountAddress": "0x09fe532dFA5FfcaD188ce19A70BB7645ce31a1C8",
+    "ownerAddress": "0x9787c95CC6D36BF0cE979200eE7fdB74E7350594",
+    "deployedAt": "2026-02-14T13:35:41.967Z",
+    "deploymentTxHash": "0x66ce27455a259f3558be5d94d696db0af9559285d7f1827046d4ba5434670e7c",
+    "gasUsed": "254892"
+  },
+  "admin@gmail.com": {
+    "accountAddress": "0x53F3788A62b46B8a45484F928Ef182Fd2c149C2b",
+    "ownerAddress": "0xb064ef4B916d7f4581f73ba5a7e38d75aD14aF12",
+    "deployedAt": "2026-02-14T15:11:25.231Z",
+    "deploymentTxHash": "0xf1662a3c9246becae6217d18fb53f41484bd95fcb75047f8ffbbe50963006382",
+    "gasUsed": "254904"
+  }
+}

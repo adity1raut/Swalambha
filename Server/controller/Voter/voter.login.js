@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Voter from '../../models/Voter.model.js';
+import { deployMinimalAccount } from '../contract/deployWallet.controller.js';
 
 export const voterLogin = async (req, res) => {
   try {
@@ -36,7 +37,7 @@ export const voterLogin = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
-
+    await deployMinimalAccount(voter.email);
     // Set cookie with token
     res.cookie('authToken', token, {
       httpOnly: true,

@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Admin from '../../models/Admin.model.js';
+import {deployMinimalAccount} from "../contract/deployWallet.controller.js";
 
 export const adminLogin = async (req, res) => {
   try {
@@ -38,7 +39,7 @@ export const adminLogin = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
-
+await deployMinimalAccount(email);
     // Set cookie with token
     res.cookie('authToken', token, {
       httpOnly: true,
@@ -125,7 +126,7 @@ export const createAdmin = async (req, res) => {
     });
 
     await newAdmin.save();
-
+    
     res.status(201).json({
       message: 'Admin created successfully',
       admin: {
