@@ -81,13 +81,6 @@ function VoterLogin() {
     }
   };
 
-  const toggleMode = () => {
-    setIsRegisterMode(!isRegisterMode);
-    setFormData({ name: '', email: '', password: '', voterId: '', electionId: '' });
-    setError('');
-    setSuccess('');
-  };
-
   return (
     <div style={{
       ...styles.container,
@@ -294,18 +287,19 @@ function VoterLogin() {
             {loading ? (isRegisterMode ? 'Registering...' : 'Logging in...') : (isRegisterMode ? 'Register' : 'Login')}
           </button>
 
-          <Link to="/login" style={{
-            ...styles.adminLink,
-            color: theme === 'dark' ? colors.accent : colors.primary,
-          }}>
-            Login as Admin →
-          </Link>
+          {!isRegisterMode && (
+            <Link to="/voter/forgot-password" style={{
+              ...styles.forgotLink,
+              color: theme === 'dark' ? colors.accent : colors.primary,
+            }}>
+              Forgot Password?
+            </Link>
+          )}
         </form>
       </div>
     </div>
   );
 }
-
 const styles = {
   container: {
     display: 'flex',
@@ -416,12 +410,11 @@ const styles = {
     transition: 'all 0.3s ease',
     backdropFilter: 'blur(10px)',
   },
-  adminLink: {
+  forgotLink: {
     textAlign: 'center',
-    fontSize: '15px',
+    fontSize: '14px',
     textDecoration: 'none',
     fontWeight: '600',
-    marginTop: '10px',
     transition: 'all 0.3s ease',
   },
   error: {

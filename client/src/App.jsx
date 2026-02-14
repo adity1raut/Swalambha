@@ -6,6 +6,7 @@ import Home from './components/Home';
 import PortalSelection from './components/PortalSelection';
 import Login from './components/Login';
 import VoterLogin from './components/VoterLogin';
+import VoterForgotPassword from './components/VoterForgotPassword';
 import Dashboard from './components/Dashboard';
 import VoterDashboard from './components/VoterDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -13,8 +14,8 @@ import PublicRoute from './components/PublicRoute';
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <ThemeProvider>
         <Router>
           <Routes>
             {/* Public Home Route - Only accessible when NOT logged in */}
@@ -47,14 +48,9 @@ function App() {
               } 
             />
             
-            <Route 
-              path="/voter/login" 
-              element={
-                <PublicRoute>
-                  <VoterLogin />
-                </PublicRoute>
-              } 
-            />
+            {/* Voter Authentication Routes */}
+            <Route path="/voter/login" element={<VoterLogin />} />
+            <Route path="/voter/forgot-password" element={<VoterForgotPassword />} />
             
             {/* Protected Routes - Only for Admin */}
             <Route 
@@ -79,8 +75,8 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
-      </AuthProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 
