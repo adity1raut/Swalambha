@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import ConnectDB from './db/ConnectDb.js';
 import adminRoutes from './routes/admin.routes.js';
 import electionRoutes from './routes/election.routes.js';
+import voterRoutes from './routes/voter.routes.js';
 
 dotenv.config();
 const app = express();
@@ -22,6 +23,7 @@ ConnectDB();
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/election', electionRoutes);
+app.use('/api/voter', voterRoutes);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);

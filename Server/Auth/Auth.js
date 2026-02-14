@@ -30,4 +30,32 @@ const authenticateToken = (req, res, next) => {
     }
 };
 
+// Middleware to check if user is admin
+export const isAdmin = (req, res, next) => {
+    if (req.user.role !== 'admin' && req.user.role !== 'superadmin') {
+        return res.status(403).json({ message: 'Access denied. Admin only.' });
+    }
+    next();
+};
+
+// Middleware to check if user is voter
+export const isVoter = (req, res, next) => {
+    if (req.user.role !== 'voter') {
+        return res.status(403).json({ message: 'Access denied. Voter only.' });
+    }
+    next();
+};
+
+// Middleware to check if user has specific role
+export const hasRole = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({ 
+                message: `Access denied. Required role: ${roles.join(' or ')}` 
+            });
+        }
+        next();
+    };
+};
+
 export default authenticateToken;
