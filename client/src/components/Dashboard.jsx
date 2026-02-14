@@ -21,6 +21,10 @@ function Dashboard() {
   const [electionForm, setElectionForm] = useState({
     title: '',
     description: '',
+    regStartDate: '',
+    regEndDate: '',
+    electionStartDate: '',
+    electionEndDate: '',
     voters: [{ name: '', email: '' }]
   });
 
@@ -124,6 +128,10 @@ function Dashboard() {
           body: JSON.stringify({
             title: electionForm.title,
             description: electionForm.description,
+            regStartDate: electionForm.regStartDate,
+            regEndDate: electionForm.regEndDate,
+            electionStartDate: electionForm.electionStartDate,
+            electionEndDate: electionForm.electionEndDate,
             voters: [{ name: 'placeholder', email: 'placeholder@temp.com' }]
           })
         });
@@ -177,7 +185,15 @@ function Dashboard() {
         setSuccess('Election created successfully! Voter credentials have been sent via email.');
       }
 
-      setElectionForm({ title: '', description: '', voters: [{ name: '', email: '' }] });
+      setElectionForm({ 
+        title: '', 
+        description: '', 
+        regStartDate: '',
+        regEndDate: '',
+        electionStartDate: '',
+        electionEndDate: '',
+        voters: [{ name: '', email: '' }] 
+      });
       setCreateCsvFile(null);
       setVoterInputMode('manual');
       setShowCreateForm(false);
@@ -1028,6 +1044,62 @@ function Dashboard() {
               style={{ ...styles.input, minHeight: '100px', resize: 'vertical' }}
               placeholder="Election description (optional)..."
             />
+          </div>
+
+          <div style={{ ...styles.inputGroup, marginTop: '25px' }}>
+            <h4 style={{ ...styles.sectionTitle, marginBottom: '20px' }}>📅 Registration Period</h4>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+              <div>
+                <label style={styles.label}>Registration Start Date & Time *</label>
+                <input
+                  type="datetime-local"
+                  name="regStartDate"
+                  value={electionForm.regStartDate}
+                  onChange={handleElectionFormChange}
+                  required
+                  style={styles.input}
+                />
+              </div>
+              <div>
+                <label style={styles.label}>Registration End Date & Time *</label>
+                <input
+                  type="datetime-local"
+                  name="regEndDate"
+                  value={electionForm.regEndDate}
+                  onChange={handleElectionFormChange}
+                  required
+                  style={styles.input}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ ...styles.inputGroup, marginTop: '25px' }}>
+            <h4 style={{ ...styles.sectionTitle, marginBottom: '20px' }}>🗳️ Election Period</h4>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+              <div>
+                <label style={styles.label}>Election Start Date & Time *</label>
+                <input
+                  type="datetime-local"
+                  name="electionStartDate"
+                  value={electionForm.electionStartDate}
+                  onChange={handleElectionFormChange}
+                  required
+                  style={styles.input}
+                />
+              </div>
+              <div>
+                <label style={styles.label}>Election End Date & Time *</label>
+                <input
+                  type="datetime-local"
+                  name="electionEndDate"
+                  value={electionForm.electionEndDate}
+                  onChange={handleElectionFormChange}
+                  required
+                  style={styles.input}
+                />
+              </div>
+            </div>
           </div>
 
           <div style={styles.votersSection}>
