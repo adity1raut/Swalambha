@@ -17,11 +17,25 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            {/* Public Home Route */}
-            <Route path="/" element={<Home />} />
+            {/* Public Home Route - Only accessible when NOT logged in */}
+            <Route 
+              path="/" 
+              element={
+                <PublicRoute>
+                  <Home />
+                </PublicRoute>
+              } 
+            />
             
-            {/* Portal Selection - Choose between Admin/Voter */}
-            <Route path="/portals" element={<PortalSelection />} />
+            {/* Portal Selection - Only accessible when NOT logged in */}
+            <Route 
+              path="/portals" 
+              element={
+                <PublicRoute>
+                  <PortalSelection />
+                </PublicRoute>
+              } 
+            />
             
             {/* Public Routes - Only accessible when NOT logged in */}
             <Route 
@@ -57,12 +71,10 @@ function App() {
               path="/voter/dashboard" 
               element={
                 <ProtectedRoute allowedRoles={['voter']}>
-            
-            ]['p32qewzx      <VoterDashboard />
+                  <VoterDashboard />
                 </ProtectedRoute>
               } 
             />
-            
             {/* Catch all - redirect to home */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

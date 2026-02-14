@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import FileUploadComponent from '../chatbot/FileUploadComponent';
 
 function Dashboard() {
   const { user, logout } = useAuth();
@@ -1250,6 +1251,13 @@ function Dashboard() {
     </div>
   );
 
+  const renderDocuments = () => (
+    <div style={styles.tabContent}>
+      <h2 style={styles.subtitle}>Document Management</h2>
+      <FileUploadComponent />
+    </div>
+  );
+
   const renderComingFeatures = () => (
     <div style={styles.tabContent}>
       <div style={styles.comingSoonCard}>
@@ -1349,6 +1357,30 @@ function Dashboard() {
 
               <button
                 onClick={() => {
+                  setActiveTab('documents');
+                  setIsMobileMenuOpen(false);
+                }}
+                style={{
+                  ...styles.sidebarItem,
+                  ...(activeTab === 'documents' ? styles.sidebarItemActive : {})
+                }}
+                onMouseEnter={(e) => {
+                  if (activeTab !== 'documents') {
+                    e.currentTarget.style.background = colors.sidebarHover || 'rgba(100, 100, 100, 0.1)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeTab !== 'documents') {
+                    e.currentTarget.style.background = 'transparent';
+                  }
+                }}
+              >
+                <span style={{ fontSize: '20px' }}>📄</span>
+                <span>Documents</span>
+              </button>
+
+              <button
+                onClick={() => {
                   setActiveTab('coming');
                   setIsMobileMenuOpen(false);
                 }}
@@ -1415,6 +1447,7 @@ function Dashboard() {
               <h1 style={styles.pageTitle}>
                 {activeTab === 'overview' && '📊 Dashboard Overview'}
                 {activeTab === 'elections' && '🗳️ Manage Elections'}
+                {activeTab === 'documents' && '📄 Document Management'}
                 {activeTab === 'coming' && '🚀 Coming Features'}
               </h1>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -1432,6 +1465,7 @@ function Dashboard() {
             <div style={styles.contentArea}>
               {activeTab === 'overview' && renderOverview()}
               {activeTab === 'elections' && renderElections()}
+              {activeTab === 'documents' && renderDocuments()}
               {activeTab === 'coming' && renderComingFeatures()}
             </div>
           </main>

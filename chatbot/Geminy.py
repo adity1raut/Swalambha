@@ -295,32 +295,34 @@ async def delete_all_data():
     global vector_store, document_cache
     
     try:
+        firebase_deleted = 0
         if db:
-            # Firebase deletion
-            batch = db.batch()
-            docs = db.collection('pdf_documents').limit(500).stream()
-            
-            deleted_count = 0
-            for doc in docs:
-                batch.delete(doc.reference)
-                deleted_count += 1
-            
-            if deleted_count > 0:
-                batch.commit()
-                logger.info(f"Deleted {deleted_count} documents from Firebase")
-        
+            try:
+                batch = db.batch()
+                docs = db.collection('pdf_documents').limit(500).stream()
+
+                for doc in docs:
+                    batch.delete(doc.reference)
+                    firebase_deleted += 1
+
+                if firebase_deleted > 0:
+                    batch.commit()
+                    logger.info(f"Deleted {firebase_deleted} documents from Firebase")
+            except Exception as e:
+                logger.warning(f"Firebase deletion failed, continuing with mock storage cleanup: {str(e)}")
+
         # Also clear mock storage
         mock_storage.delete_all()
-        
+
         # Invalidate caches
         vector_store = None
         document_cache.clear()
-        
+
         return JSONResponse(content={
             "message": "All data deleted successfully",
-            "storage": "Firebase" if db else "Mock"
+            "storage": "Firebase" if db and firebase_deleted > 0 else "Mock"
         })
-        
+
     except Exception as e:
         logger.error(f"Error deleting data: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error deleting data: {str(e)}")
@@ -348,18 +350,17 @@ async def get_documents_from_storage(components: dict) -> List[Document]:
 
 def _get_documents_from_storage(components: dict) -> List[Document]:
     documents = []
-    
-    try:
-        if db:
-            # Try Firebase first
+
+    if db:
+        try:
             docs = db.collection('pdf_documents').stream()
             for doc in docs:
                 doc_data = doc.to_dict()
                 filename = doc_data.get('filename', 'Unknown')
-                
+
                 if 'chunks' in doc_data:
                     for i, chunk in enumerate(doc_data.get('chunks', [])):
-                        if chunk.strip():  # Only add non-empty chunks
+                        if chunk.strip():
                             documents.append(Document(
                                 page_content=chunk,
                                 metadata={
@@ -369,7 +370,6 @@ def _get_documents_from_storage(components: dict) -> List[Document]:
                                 }
                             ))
                 elif 'text' in doc_data:
-                    # Fallback: split text if chunks not available
                     full_text = doc_data['text']
                     chunks = components["text_splitter"].split_text(full_text)
                     for i, chunk in enumerate(chunks):
@@ -382,37 +382,36 @@ def _get_documents_from_storage(components: dict) -> List[Document]:
                                     'storage': 'firebase'
                                 }
                             ))
-        else:
-            # Use mock storage
-            for doc_data in mock_storage.get_all_documents():
-                filename = doc_data.get('filename', 'Unknown')
-                chunks = doc_data.get('chunks', [])
-                
-                for i, chunk in enumerate(chunks):
-                    if chunk.strip():
-                        documents.append(Document(
-                            page_content=chunk,
-                            metadata={
-                                'source': filename,
-                                'chunk_id': i,
-                                'storage': 'mock'
-                            }
-                        ))
-        
-        logger.info(f"Retrieved {len(documents)} document chunks")
-        return documents
-        
-    except Exception as e:
-        logger.error(f"Error in _get_documents_from_storage: {str(e)}")
-        return []
+        except Exception as e:
+            logger.warning(f"Firebase retrieval failed, falling back to mock storage: {str(e)}")
+            documents = []
+
+    # Always include mock storage documents
+    for doc_data in mock_storage.get_all_documents():
+        filename = doc_data.get('filename', 'Unknown')
+        chunks = doc_data.get('chunks', [])
+
+        for i, chunk in enumerate(chunks):
+            if chunk.strip():
+                documents.append(Document(
+                    page_content=chunk,
+                    metadata={
+                        'source': filename,
+                        'chunk_id': i,
+                        'storage': 'mock'
+                    }
+                ))
+
+    logger.info(f"Retrieved {len(documents)} document chunks")
+    return documents
 
 @app.get("/documents")
 async def list_documents():
     """List all uploaded documents"""
-    try:
-        documents = []
-        
-        if db:
+    documents = []
+
+    if db:
+        try:
             docs = db.collection('pdf_documents').stream()
             for doc in docs:
                 doc_data = doc.to_dict()
@@ -422,23 +421,23 @@ async def list_documents():
                     'text_length': len(doc_data.get('text', '')),
                     'storage': 'firebase'
                 })
-        else:
-            for doc_data in mock_storage.get_all_documents():
-                documents.append({
-                    'filename': doc_data.get('filename'),
-                    'chunk_count': len(doc_data.get('chunks', [])),
-                    'text_length': len(doc_data.get('text', '')),
-                    'storage': 'mock'
-                })
-        
-        return JSONResponse(content={
-            "documents": documents,
-            "total": len(documents)
+        except Exception as e:
+            logger.warning(f"Firebase listing failed, falling back to mock storage: {str(e)}")
+            documents = []
+
+    # Always include mock storage documents
+    for doc_data in mock_storage.get_all_documents():
+        documents.append({
+            'filename': doc_data.get('filename'),
+            'chunk_count': len(doc_data.get('chunks', [])),
+            'text_length': len(doc_data.get('text', '')),
+            'storage': 'mock'
         })
-        
-    except Exception as e:
-        logger.error(f"Error listing documents: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+
+    return JSONResponse(content={
+        "documents": documents,
+        "total": len(documents)
+    })
 
 @app.post("/chat")
 async def chat(
