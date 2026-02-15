@@ -1,16 +1,23 @@
 {
   "admin@gmail.com": {
-    "accountAddress": "0x75537828f2ce51be7289709686A69CbFDbB714F1",
+    "accountAddress": "0xCafac3dD18aC6c6e92c921884f9E4176737C052c",
     "ownerAddress": "0xb064ef4B916d7f4581f73ba5a7e38d75aD14aF12",
-    "deployedAt": "2026-02-14T21:49:58.523Z",
-    "deploymentTxHash": "0x6fef4ca044350f4e2f41665a0b34eab69ac89dffd945ac006512f67a9acf93d1",
+    "deployedAt": "2026-02-15T03:40:25.504Z",
+    "deploymentTxHash": "0xacd904db5cf7e90d390af1c38d028bec30d39a77aa6a619adaef4bf20c5cff48",
+    "gasUsed": "254904"
+  },
+  "2023bcs047@sggs.ac.in": {
+    "accountAddress": "0x9f1ac54BEF0DD2f6f3462EA0fa94fC62300d3a8e",
+    "ownerAddress": "0xbF301BD174E0F24C3aC781434D12a618B0850A3c",
+    "deployedAt": "2026-02-15T03:43:12.965Z",
+    "deploymentTxHash": "0x5e08eb616c420d958b2768a8c61ca4490ea4b6a106cf19ecfc253a7807952bab",
     "gasUsed": "254904"
   },
   "2023bcs035@sggs.ac.in": {
-    "accountAddress": "0x61ef99673A65BeE0512b8d1eB1aA656866D24296",
+    "accountAddress": "0xbf9fBFf01664500A33080Da5d437028b07DFcC55",
     "ownerAddress": "0x9787c95CC6D36BF0cE979200eE7fdB74E7350594",
-    "deployedAt": "2026-02-15T01:50:07.462Z",
-    "deploymentTxHash": "0x42459a42e1b0f561c981d696aca93986a452a5e5ccd5526e53ba19ca8e8c2ba5",
+    "deployedAt": "2026-02-15T03:50:40.810Z",
+    "deploymentTxHash": "0x2dc7adc02d9f70815e7c1c5b9e0803949a78d321cdbfbed59a66acd74b335b76",
     "gasUsed": "254892"
   }
 }
