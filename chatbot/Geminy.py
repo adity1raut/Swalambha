@@ -4,9 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.chains.retrieval_qa.base import RetrievalQA
-from langchain_core.documents import Document
-from langchain_core.prompts import PromptTemplate
+from langchain.chains import RetrievalQA
+from langchain.docstore.document import Document
+from langchain.prompts import PromptTemplate
 import os
 import fitz
 from dotenv import load_dotenv
