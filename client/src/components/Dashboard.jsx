@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import FileUploadComponent from '../chatbot/FileUploadComponent';
+import {getAllElections} from "../contract/Election.js";
 
 function Dashboard() {
   const { user, logout } = useAuth();
@@ -41,29 +42,48 @@ function Dashboard() {
     }
   }, [activeTab]);
 
-  const fetchElections = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/election/all`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      const data = await response.json();
-      if (response.ok) {
-        setElections(data.elections);
-      } else {
-        setError(data.message);
+const fetchElections = async () => {
+  setLoading(true);
+  setError('');
+
+  try {
+    const onchainElections = await getAllElections();
+
+    // Optional: Format status based on time
+    const now = Math.floor(Date.now() / 1000);
+
+    const formatted = onchainElections.map((e) => {
+      let status = "UPCOMING";
+
+      if (now >= e.electionStart && now <= e.electionEnd) {
+        status = "ONGOING";
+      } else if (now > e.electionEnd) {
+        status = "COMPLETED";
       }
-    } catch (err) {
-      setError('Failed to fetch elections');
-      console.error('Fetch error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+
+      return {
+        ...e,
+        _id: e.electionId, // because your UI expects _id
+        title: e.position,
+        description: `Election for ${e.position}`,
+        startDate: new Date(e.electionStart * 1000),
+        endDate: new Date(e.electionEnd * 1000),
+        totalVoters: 0,
+        totalCandidates: 0,
+        status
+      };
+    });
+
+    setElections(formatted);
+
+  } catch (err) {
+    console.error(err);
+    setError("Failed to fetch on-chain elections");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleLogout = async () => {
     try {
@@ -1281,12 +1301,12 @@ function Dashboard() {
                     {uploadingElectionId === election._id ? '✕ Cancel' : '📤 Upload Voters CSV'}
                   </button>
 
-                  <button
+                  {/* <button
                     onClick={() => handleDeleteElection(election._id)}
                     style={styles.deleteButton}
                   >
                     🗑️ Delete
-                  </button>
+                  </button> */}
                 </div>
 
                 {uploadingElectionId === election._id && (
