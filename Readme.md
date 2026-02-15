@@ -1,3 +1,12 @@
+## 👥 Team Details
+
+**Team Name:** CYPHERS (Team No. 13)  
+
+**Team Leader:** Rahul Bhosle  
+**Team Members:** Om Zade, Aditya Raut, Nandkishor Jadhav
+
+---
+
 # 🗳️ E-Voting System - Complete Election Management Platform
 
 A comprehensive, secure, and transparent digital platform for conducting elections with role-based access for administrators and voters.
