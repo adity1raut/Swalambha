@@ -1,0 +1,12 @@
+const hre=require("hardhat");
+
+async function main() {
+    const af=await hre.ethers.deployContract("AccountFactory");
+    await af.waitForDeployment();
+    console.log("af",af.target);
+}
+
+main().catch((error)=>{
+    console.error(error);
+    process.exitCode=1;
+});
