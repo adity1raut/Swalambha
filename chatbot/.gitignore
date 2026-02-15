@@ -1,5 +1,6 @@
 /env
 /firebase-credentials.json
+/chatbot-5b997-firebase-adminsdk-fbsvc-83be944156.json
 /__pycache__/
 *.pyc
 *.pyo
