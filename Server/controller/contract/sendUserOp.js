@@ -12,8 +12,8 @@ const provider = new ethers.JsonRpcProvider(RPC_URL);
 const ENTRYPOINT = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 const PAYMASTER = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const FACTORY = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-const TOKEN = "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE";
-const ELECTION = "0x59b670e9fA9D0A427751Af201D676719a970857b";
+const TOKEN = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
+const ELECTION = "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF";
 
 const ACCOUNTS_FILE = path.join(__dirname, "accounts.json");
 const PRIVATE_KEY =
@@ -411,40 +411,10 @@ export async function sendUserOpFunc(email, encodedFunctionData, contractAddress
   }
 }
 
-/**
- * Get account information by email
- * @param {string} email - User's email address
- * @returns {Object|null} Account data or null
- */
 export function getAccountInfo(email) {
   return getAccountByEmail(email);
 }
 
-/**
- * Check if an account exists for an email
- * @param {string} email - User's email address
- * @returns {boolean} True if account exists
- */
 export function accountExists(email) {
   return getAccountByEmail(email) !== null;
 }
-
-// Example usage (commented out)
-/*
-import { Election } from "./electionAbi.js"; // Your election ABI
-
-// Example: Vote for a candidate
-const electionInterface = new ethers.Interface(Election.abi);
-const encodedVoteData = electionInterface.encodeFunctionData("vote", [
-  1, // electionId
-  "candidate@example.com" // candidateId
-]);
-
-const result = await sendUserOp(
-  "voter@example.com",
-  encodedVoteData,
-  "0x68B1D87F95878fE05B998F19b66F4baba5De1aed" // Election contract address
-);
-
-console.log("Vote transaction:", result.txHash);
-*/

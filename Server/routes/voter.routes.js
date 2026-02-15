@@ -1,16 +1,32 @@
-import express from 'express';
-import { voterLogin, getVoterProfile, voterLogout, registerVoter } from '../controller/Voter/voter.login.js';
-import { forgotPassword, verifyOTP, resetPassword } from '../controller/Voter/voter.forgetpass.js';
-import authenticateToken, { isVoter } from '../Auth/Auth.js';
+import express from "express";
+import {
+  voterLogin,
+  getVoterProfile,
+  voterLogout,
+  registerVoter,
+} from "../controller/Voter/voter.login.js";
+import {
+  forgotPassword,
+  verifyOTP,
+  resetPassword,
+} from "../controller/Voter/voter.forgetpass.js";
+import authenticateToken, { isVoter } from "../Auth/Auth.js";
+import { addCandidate ,castVote} from "../controller/contract/deployWallet.controller.js";
+import { getVotersElection } from "../controller/Voter/electionGet.js";
+
 
 const router = express.Router();
 
-router.post('/login', voterLogin); // Public route
-router.post('/register', registerVoter); // Public route
-router.post('/forgot-password', forgotPassword); // Public route
-router.post('/verify-otp', verifyOTP); // Verify OTP
-router.post('/reset-password', resetPassword); // Reset password with OTP
-router.get('/profile', authenticateToken, isVoter, getVoterProfile); // Protected - Voter only
-router.post('/logout', authenticateToken, voterLogout); // Protected
+router.post("/login", voterLogin); // Public route
+router.post("/register", registerVoter); // Public route
+router.post("/forgot-password", forgotPassword); // Public route
+router.post("/verify-otp", verifyOTP); // Verify OTP
+router.post("/reset-password", resetPassword); // Reset password with OTP
+router.get("/profile", authenticateToken, isVoter, getVoterProfile); // Protected - Voter only
+router.post("/logout", authenticateToken, voterLogout); // Protected
+router.post("/addCandidate", authenticateToken, addCandidate);
+router.post("/castVote", authenticateToken, castVote);
+
+router.post("/getElection", authenticateToken, getVotersElection);
 
 export default router;

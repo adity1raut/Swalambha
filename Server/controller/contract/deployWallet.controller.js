@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { sendUserOpFunc } from "./sendUserOp.js";
+import Voter from "../../models/Voter.model.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,8 +15,8 @@ const provider = new ethers.JsonRpcProvider(RPC_URL);
 const ENTRYPOINT = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 const PAYMASTER = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const FACTORY = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-const TOKEN = "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE";
-const ELECTION = "0x59b670e9fA9D0A427751Af201D676719a970857b";
+const TOKEN = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
+const ELECTION = "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF";
 
 const ACCOUNTS_FILE = path.join(__dirname, "accounts.json");
 const PRIVATE_KEY =
@@ -1029,15 +1030,25 @@ export async function deployMinimalAccount(email) {
       wallet.address,
       "latest",
     );
-    if (currentElectionId - 1 > 0) {
+
+    // Convert currentElectionId to BigInt and compare
+    if (currentElectionId > 1n) {
       const tokenWithSigner = tokenContract.connect(wallet);
+
+      // Subtract 1n (BigInt) from currentElectionId (BigInt)
+      const electionIdToMint = currentElectionId - 1n;
+
       const mintTx = await tokenWithSigner.mintAuthorizedVoters(
         accountAddress,
-        currentElectionId - 1,
+        electionIdToMint, // Pass BigInt directly
         {
           nonce: mintNonce,
         },
       );
+
+      await mintTx.wait();
+      console.log("Tokens minted successfully");
+
       const tokenBalance = await tokenContract.balanceOf(accountAddress);
       console.log("Token balance:", ethers.formatEther(tokenBalance), "tokens");
     }
@@ -1133,6 +1144,107 @@ export async function createElectionOnchain(
     TOKEN,
   ]);
 
-  // Pass encoded data to your userOp sender
-  return await sendUserOpFunc(email, encodedData,ELECTION);
+  return await sendUserOpFunc(email, encodedData, ELECTION);
 }
+
+export const addCandidate = async (req, res) => {
+  try {
+    const { electionId, email } = req.body;
+
+    const abi = ["function addCandidate(uint256 _electionId, string _email)"];
+
+    const iface = new ethers.Interface(abi);
+
+    // Ensure correct numeric type
+    const encodedData = iface.encodeFunctionData("addCandidate", [
+      Number(electionId),
+      email,
+    ]);
+
+    const result = await sendUserOpFunc(
+      email, // smart account owner
+      encodedData, // encoded contract call
+      ELECTION, // contract address
+    );
+
+    return res.status(200).json({
+      success: true,
+      result,
+    });
+  } catch (error) {
+    console.error("Add candidate error:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+export const castVote = async (req, res) => {
+  try {
+    const { electionId, candidateEmail, email } = req.body;
+
+    // 1. Find the voter by email
+    const voter = await Voter.findOne({ email: email });
+
+    if (!voter) {
+      return res.status(404).json({
+        success: false,
+        error: "Voter not found",
+      });
+    }
+
+    // 2. Check if voter has already voted
+    // if (voter.hasVoted) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     error: "You have already cast your vote for this election",
+    //   });
+    // }
+
+    // 3. Prepare blockchain transaction
+    const abi = [
+      "function vote(uint256 _electionId, string memory _candidateId)",
+    ];
+    const iface = new ethers.Interface(abi);
+
+    const encodedData = iface.encodeFunctionData("vote", [
+      Number(electionId),
+      candidateEmail,
+    ]);
+    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+
+    // Contract address
+    const contractAddress = "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF";
+    const election = new ethers.Contract(contractAddress, abi, provider);
+    const wallet = new ethers.Wallet(
+      "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+      provider,
+    );
+    const contract = new ethers.Contract(contractAddress, abi, wallet);
+
+    // 4. Call vote function
+    const tx = await contract.vote(Number(electionId), candidateEmail);
+    const receipt = await tx.wait(); // Wait for confirmation
+
+    console.log("Transaction hash:", receipt.transactionHash);
+
+    // 4. Execute blockchain transaction
+    const result = await sendUserOpFunc(
+      email, // smart account owner
+      encodedData, // encoded contract call
+      ELECTION, // contract address
+    );
+
+    return res.status(200).json({
+      success: true,
+      result,
+      message: "Vote cast successfully",
+    });
+  } catch (error) {
+    console.error("Cast vote error:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
