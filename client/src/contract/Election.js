@@ -355,10 +355,9 @@ const abi = [
   },
 ];
 
-const contractAddress = "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF";
+const contractAddress = "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE";
 
-// const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545"); // change if needed
-const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
 const contract = new ethers.Contract(contractAddress, abi, provider);
 
